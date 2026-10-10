@@ -1,0 +1,29 @@
+/* ========================================
+   SmartTax TH - Custom Styles
+   ======================================== */
+
+/* Google Font: Sarabun */
+body {
+    font-family: 'Sarabun', sans-serif;
+}
+
+/* Print styles */
+@media print {
+    .no-print {
+        display: none !important;
+    }
+
+    .print-only {
+        display: block !important;
+    }
+
+    body {
+        background: white !important;
+        color: black !important;
+    }
+}
+
+/* Hidden by default */
+.print-only {
+    display: none;
+}

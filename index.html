@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>SmartTax TH - โปรแกรมคำนวณภาษี</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Tailwind Configuration -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Sarabun', 'sans-serif']
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                            800: '#166534'
+                        }
+                    }
+                }
+            }
+        };
+    </script>
+
+    <!-- Font Awesome -->
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    >
+
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet"
+    >
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- JavaScript Files -->
+    <script src="js/taxCalculator.js" defer></script>
+    <script src="js/chart.js" defer></script>
+    <script src="js/app.js" defer></script>
+</head>
+
+<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col font-sans transition-colors duration-200">
+
+    <!-- Header -->
+    <header class="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-30 no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-brand-600 flex items-center justify-center text-white shadow-md shadow-brand-500/20">
+                    <i class="fa-solid fa-server text-lg"></i>
+                </div>
+
+                <div>
+                    <h1 class="text-xl font-bold bg-gradient-to-r from-brand-700 to-emerald-500 bg-clip-text text-transparent dark:from-brand-500 dark:to-emerald-400">
+                        SmartTax TH
+                        <span class="text-xs px-2 py-0.5 rounded bg-brand-100 text-brand-800 dark:bg-brand-900 dark:text-brand-300 font-normal">
+                            Full-Stack Architecture
+                        </span>
+                    </h1>
+
+                    <p class="text-xs text-slate-500 dark:text-slate-400">
+                        แยกส่วน Frontend & Backend API Service
+                    </p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-2 sm:gap-4">
+                <button
+                    id="architectureToggle"
+                    type="button"
+                    class="flex items-center gap-2 px-3 py-2 rounded-lg bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-300 text-xs font-semibold border border-indigo-200 dark:border-indigo-800 transition-colors"
+                >
+                    <i class="fa-solid fa-code"></i>
+                    ดูสถาปัตยกรรมโค้ด
+                </button>
+
+                <button
+                    id="themeToggleBtn"
+                    type="button"
+                    class="p-2.5 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition-colors"
+                    title="เปลี่ยนธีม"
+                >
+                    <i class="fa-solid fa-moon dark:hidden"></i>
+                    <i class="fa-solid fa-sun hidden dark:inline"></i>
+                </button>
+            </div>
+
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+
+        <!-- Architecture Modal -->
+        <div
+            id="archModal"
+            class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4"
+        >
+            <div class="bg-white dark:bg-slate-800 max-w-4xl w-full max-h-[85vh] rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 flex flex-col overflow-hidden">
+
+                <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center bg-slate-50 dark:bg-slate-800/80">
+                    <h3 class="font-bold text-base text-slate-900 dark:text-white flex items-center gap-2">
+                        <i class="fa-solid fa-network-wired text-brand-600"></i>
+                        สถาปัตยกรรมโค้ด (Frontend & Backend Separation)
+                    </h3>
+
+                    <button
+                        id="closeArchitectureModal"
+                        type="button"
+                        class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+                        aria-label="ปิดหน้าต่าง"
+                    >
+                        <i class="fa-solid fa-xmark text-lg"></i>
+                    </button>
+                </div>
+
+                <div class="p-6 overflow-y-auto space-y-6 text-xs sm:text-sm text-slate-700 dark:text-slate-300">
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                        <!-- Frontend Architecture -->
+                        <div class="bg-slate-50 dark:bg-slate-900 p-4 rounded-xl border border-slate-200 dark:border-slate-700">
+                            <h4 class="font-bold text-brand-600 dark:text-brand-400 mb-2 flex items-center gap-2">
+                                <i class="fa-solid fa-desktop"></i>
+                                Front-end Layer (Client)
+                            </h4>
+
+                            <p class="text-xs text-slate-500 mb-3">
+                                จัดการ UI, Event Listeners, Form Inputs, Chart.js และส่ง HTTP Request ไปยัง Backend API
+                            </p>
+
+                            <pre class="bg-slate-900 text-emerald-400 p-3 rounded-lg overflow-x-auto text-[11px]"><code>async function fetchTaxCalculation(payload) {
+    const response = await fetch(
+        '/api/v1/calculate-tax',
+        {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+        }
+    );
+
+    return await response.json();
+}</code></pre>
+                        </div>
+
+                        <!-- Backend Architecture -->
+                        <div class="bg-slate-50 dark:bg-slate-900 p-4 rounded-xl border border-slate-200 dark:border-slate-700">
+                            <h4 class="font-bold text-indigo-600 dark:text-indigo-400 mb-2 flex items-center gap-2">
+                                <i class="fa-solid fa-server"></i>
+                                Back-end Layer (Node.js / Express API)
+                            </h4>
+
+                            <p class="text-xs text-slate-500 mb-3">
+                                รับข้อมูลรายได้ ค่าลดหย่อน คำนวณภาษี และส่ง JSON Response กลับมา
+                            </p>
+
+                            <pre class="bg-slate-900 text-indigo-300 p-3 rounded-lg overflow-x-auto text-[11px]"><code>app.post('/api/v1/calculate-tax', (req, res) => {
+    const taxData = TaxEngine.calculate(req.body);
+
+    res.json({
+        status: 'success',
+        data: taxData
+    });
+});</code></pre>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Layout -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+
+            <!-- Input Form -->
+            <div class="lg:col-span-5 space-y-6">
+
+                <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm border border-slate-200/80 dark:border-slate-700">
+
+                    <div class="flex items-center justify-between mb-5">
+                        <h2 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                            <i class="fa-solid fa-sliders text-brand-600 dark:text-brand-500"></i>
+                            กรอกข้อมูล (Frontend Form)
+                        </h2>
+
+                        <span class="text-[10px] px-2 py-0.5 rounded bg-emerald-50 text-emerald-600 border border-emerald-200 font-semibold">
+                            API Ready
+                        </span>
+                    </div>
+
+                    <form id="taxForm" class="space-y-4">
+
+                        <!-- Monthly Salary -->
+                        <div>
+                            <label
+                                for="monthlySalary"
+                                class="block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5"
+                            >
+                                เงินเดือนประจำ (บาท / เดือน)
+                            </label>
+
+                            <input
+                                type="number"
+                                id="monthlySalary"
+                                value="65000"
+                                min="0"
+                                step="1000"
+                                class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-800 dark:text-white text-sm font-medium"
+                            >
+                        </div>
+
+                        <!-- Other Income -->
+                        <div>
+                            <label
+                                for="otherIncome"
+                                class="block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5"
+                            >
+                                โบนัส / รายได้อื่นๆ ต่อปี (บาท)
+                            </label>
+
+                            <input
+                                type="number"
+                                id="otherIncome"
+                                value="130000"
+                                min="0"
+                                step="5000"
+                                class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-800 dark:text-white text-sm font-medium"
+                            >
+                        </div>
+
+                        <!-- Deductions -->
+                        <div class="pt-3 border-t border-slate-100 dark:border-slate-700/60 space-y-3">
+
+                            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400">
+                                ค่าลดหย่อน
+                            </h3>
+
+                            <div class="grid grid-cols-2 gap-3">
+
+                                <div>
+                                    <label
+                                        for="socialSecurity"
+                                        class="block text-xs text-slate-600 dark:text-slate-300 mb-1"
+                                    >
+                                        ประกันสังคม (สูงสุด 9k)
+                                    </label>
+
+                                    <input
+                                        type="number"
+                                        id="socialSecurity"
+                                        value="9000"
+                                        max="9000"
+                                        min="0"
+                                        class="w-full px-2.5 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-xs"
+                                    >
+                                </div>
+
+                                <div>
+                                    <label
+                                        for="lifeInsurance"
+                                        class="block text-xs text-slate-600 dark:text-slate-300 mb-1"
+                                    >
+                                        ประกันชีวิต/สุขภาพ
+                                    </label>
+
+                                    <input
+                                        type="number"
+                                        id="lifeInsurance"
+                                        value="30000"
+                                        min="0"
+                                        class="w-full px-2.5 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-xs"
+                                    >
+                                </div>
+
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-3">
+
+                                <div>
+                                    <label
+                                        for="pvdRmfSsf"
+                                        class="block text-xs text-slate-600 dark:text-slate-300 mb-1"
+                                    >
+                                        กองทุน PVD / SSF / RMF
+                                    </label>
+
+                                    <input
+                                        type="number"
+                                        id="pvdRmfSsf"
+                                        value="50000"
+                                        min="0"
+                                        class="w-full px-2.5 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-xs"
+                                    >
+                                </div>
+
+                                <div>
+                                    <label
+                                        for="childrenCount"
+                                        class="block text-xs text-slate-600 dark:text-slate-300 mb-1"
+                                    >
+                                        จำนวนบุตร (คน)
+                                    </label>
+
+                                    <input
+                                        type="number"
+                                        id="childrenCount"
+                                        value="0"
+                                        min="0"
+                                        step="1"
+                                        class="w-full px-2.5 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-xs"
+                                    >
+                                </div>
+
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Calculation Results -->
+            <div class="lg:col-span-7 space-y-6">
+
+                <!-- Summary Cards -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+
+                    <!-- Net Income -->
+                    <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl shadow-sm border border-slate-200/80 dark:border-slate-700">
+                        <div class="text-slate-500 text-xs font-medium mb-1">
+                            รายได้สุทธิหลังภาษี
+                        </div>
+
+                        <div id="netIncomeDisplay" class="text-2xl font-extrabold text-brand-600">
+                            ฿0
+                        </div>
+
+                        <div id="monthlyTakeHome" class="text-xs text-slate-400 mt-1">
+                            ~฿0 / เดือน
+                        </div>
+                    </div>
+
+                    <!-- Total Tax -->
+                    <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl shadow-sm border border-slate-200/80 dark:border-slate-700">
+                        <div class="text-slate-500 text-xs font-medium mb-1">
+                            ภาษีที่ต้องจ่ายรวม
+                        </div>
+
+                        <div id="totalTaxDisplay" class="text-2xl font-extrabold text-rose-600">
+                            ฿0
+                        </div>
+
+                        <div id="effectiveTaxRate" class="text-xs text-slate-400 mt-1">
+                            อัตราเฉลี่ย: 0%
+                        </div>
+                    </div>
+
+                    <!-- Marginal Tax Rate -->
+                    <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl shadow-sm border border-slate-200/80 dark:border-slate-700">
+                        <div class="text-slate-500 text-xs font-medium mb-1">
+                            ฐานภาษีสูงสุด (Backend API)
+                        </div>
+
+                        <div id="marginalTaxRate" class="text-2xl font-extrabold text-slate-900 dark:text-white">
+                            0%
+                        </div>
+
+                        <div id="apiStatusBadge" class="text-[10px] text-emerald-500 font-semibold mt-1">
+                            ● API Status: 200 OK
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Chart -->
+                <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm border border-slate-200/80 dark:border-slate-700 space-y-4">
+
+                    <h3 class="text-base font-bold text-slate-900 dark:text-white flex items-center justify-between">
+                        <span class="flex items-center gap-2">
+                            <i class="fa-solid fa-chart-pie text-brand-600"></i>
+                            สัดส่วนภาษีและรายได้
+                        </span>
+                    </h3>
+
+                    <div class="relative flex justify-center items-center h-52">
+                        <canvas id="taxBreakdownChart"></canvas>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </main>
+
+</body>
+</html>
